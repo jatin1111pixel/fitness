@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fitness Goal Tracker</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),
+        url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438");
+    background-size:cover;
+    background-position:center;
+}
+
+/* AUTH */
+.auth{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+.card{
+    width:420px;
+    padding:35px;
+    border-radius:22px;
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(18px);
+    box-shadow:0 25px 60px rgba(0,0,0,.7);
+    text-align:center;
+    color:#fff;
+}
+.card img{
+    width:110px;
+    margin-bottom:12px;
+}
+input,select{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:none;
+    border-radius:10px;
+    outline:none;
+}
+button{
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#00e5ff,#7c4dff);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #00e5ff;
+}
+.link{
+    margin-top:15px;
+    color:#00e5ff;
+    cursor:pointer;
+}
+.hidden{display:none;}
+
+/* DASHBOARD */
+#dashboard{display:none;}
+header{
+    color:white;
+    text-align:center;
+    font-size:30px;
+    padding:20px;
+}
+.container{
+    max-width:1000px;
+    margin:20px auto;
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(18px);
+    box-shadow:0 25px 60px rgba(0,0,0,.7);
+    color:white;
+}
+.banner{
+    height:200px;
+    border-radius:18px;
+    background:
+        linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),
+        url("https://images.unsplash.com/photo-1558611848-73f7eb4001a1");
+    background-size:cover;
+    background-position:center;
+    margin-bottom:25px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+.result{
+    margin-top:25px;
+    padding:20px;
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+}
+.logout{
+    background:linear-gradient(135deg,#ff5252,#ff1744);
+}
+.madeby{
+    margin-top:15px;
+    font-size:13px;
+    color:#ddd;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="auth" id="loginPage">
+<div class="card">
+<img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+<h2>Fitness Login</h2>
+<input id="loginUser" placeholder="Username">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<div class="link" onclick="showSignup()">Create Account</div>
+</div>
+<div class="madeby">Made by <b>Ayush Pathak</b></div>
+</div>
+
+<!-- SIGNUP -->
+<div class="auth hidden" id="signupPage">
+<div class="card">
+<img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+<h2>Create Account</h2>
+<input id="newUser" placeholder="Username">
+<input id="newPass" type="password" placeholder="Password">
+<button onclick="signup()">Create Account</button>
+<div class="link" onclick="showLogin()">Back to Login</div>
+</div>
+<div class="madeby">Made by <b>Ayush Pathak</b></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+<header><i class="fa-solid fa-dumbbell"></i> Fitness Goal Tracker</header>
+
+<div class="container">
+<div class="banner"></div>
+
+<div class="grid">
+<select id="gender">
+<option value="m">Male</option>
+<option value="f">Female</option>
+</select>
+
+<input id="name" placeholder="Your Name">
+<input id="weight" type="number" placeholder="Current Weight (kg)">
+<input id="height" type="number" step="0.01" placeholder="Height (m)">
+<input id="age" type="number" placeholder="Age">
+<input id="goalWeight" type="number" placeholder="Goal Weight (kg)">
+<input id="weeks" type="number" placeholder="Weeks to reach goal">
+
+<select id="activity">
+<option value="1.2">Sedentary</option>
+<option value="1.375">Lightly Active</option>
+<option value="1.55">Moderately Active</option>
+<option value="1.725">Very Active</option>
+<option value="1.9">Extra Active</option>
+</select>
+</div>
+
+<button onclick="calculate()">
+<i class="fa-solid fa-calculator"></i> Calculate & Save Report
+</button>
+
+<div class="result" id="output"></div>
+
+<button class="logout" onclick="logout()">
+<i class="fa-solid fa-right-from-bracket"></i> Logout
+</button>
+
+<div class="madeby">Made by <b>Ayush Pathak</b></div>
+</div>
+</div>
+
+<script>
+/* ELEMENTS */
+const loginPage = document.getElementById("loginPage");
+const signupPage = document.getElementById("signupPage");
+const dashboard = document.getElementById("dashboard");
+
+const loginUser = document.getElementById("loginUser");
+const loginPass = document.getElementById("loginPass");
+const newUser = document.getElementById("newUser");
+const newPass = document.getElementById("newPass");
+
+const gender = document.getElementById("gender");
+const nameInput = document.getElementById("name");
+const weight = document.getElementById("weight");
+const height = document.getElementById("height");
+const age = document.getElementById("age");
+const goalWeight = document.getElementById("goalWeight");
+const weeks = document.getElementById("weeks");
+const activity = document.getElementById("activity");
+const output = document.getElementById("output");
+
+/* STORAGE */
+let users = JSON.parse(localStorage.getItem("fitness_users")) || [];
+
+/* AUTH */
+function showSignup(){
+    loginPage.classList.add("hidden");
+    signupPage.classList.remove("hidden");
+}
+function showLogin(){
+    signupPage.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+}
+function signup(){
+    if(!newUser.value || !newPass.value){
+        alert("Fill all fields");
+        return;
+    }
+    users.push({u:newUser.value,p:newPass.value});
+    localStorage.setItem("fitness_users",JSON.stringify(users));
+    alert("Account Created!");
+    showLogin();
+}
+function login(){
+    let ok = users.find(x=>x.u===loginUser.value && x.p===loginPass.value);
+    if(ok){
+        loginPage.style.display="none";
+        dashboard.style.display="block";
+    }else alert("Invalid Login");
+}
+function logout(){
+    dashboard.style.display="none";
+    loginPage.style.display="flex";
+}
+
+/* FITNESS */
+function bmiCategory(b){
+    if(b<18.5) return "Underweight";
+    if(b<25) return "Healthy";
+    if(b<30) return "Overweight";
+    return "Obese";
+}
+
+function calculate(){
+    let w=+weight.value;
+    let h=+height.value;
+    let a=+age.value;
+    let gw=+goalWeight.value;
+    let wk=+weeks.value;
+    let act=+activity.value;
+    let g=gender.value;
+    let n=nameInput.value || "Guest";
+
+    let bmi=w/(h*h);
+    let bmr=g==="m"
+        ? 88.362+13.397*w+4.799*(h*100)-5.677*a
+        : 447.593+9.247*w+3.098*(h*100)-4.33*a;
+
+    let calories=(bmr*act)+((gw-w)*7700)/(wk*7);
+    let minH=18.5*h*h;
+    let maxH=24.9*h*h;
+
+    output.innerHTML=`
+    <b>Hello ${n}</b><br>
+    BMI: ${bmi.toFixed(2)} (${bmiCategory(bmi)})<br>
+    Calories/day: <b>${calories.toFixed(0)}</b><br>
+    Healthy Weight: ${minH.toFixed(1)} – ${maxH.toFixed(1)} kg`;
+
+    let report=`Fitness Report
+Name: ${n}
+BMI: ${bmi.toFixed(2)}
+Calories/day: ${calories.toFixed(0)}
+Healthy Range: ${minH.toFixed(1)} – ${maxH.toFixed(1)} kg`;
+
+    let blob=new Blob([report],{type:"text/plain"});
+    let aTag=document.createElement("a");
+    aTag.href=URL.createObjectURL(blob);
+    aTag.download="fitness_report.txt";
+    aTag.click();
+}
+</script>
+
+</body>
+</html>
